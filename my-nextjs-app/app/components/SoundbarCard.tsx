@@ -8,14 +8,14 @@ interface WaveProps {
   delay: number;
 }
 
-const SoundWave = styled(Box)(({ theme }) => ({
+const SoundWave = styled(Box)(() => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-around',
   height: '100%',
 }));
 
-const Wave = styled(Box)<WaveProps>(({ height, delay, theme }) => ({
+const Wave = styled(Box)<WaveProps>(({ height, delay }) => ({
   width: '8px',
   height: height,
   backgroundColor: "#0096FF",
@@ -43,7 +43,7 @@ const SoundbarCard: React.FC = () => {
   // Run this only on the client
   useEffect(() => {
     setDelays(waves.map(() => Math.random()));
-  }, []);
+  }, [waves]);
 
   return (
     <Card elevation={3} sx={{ maxWidth: 800, padding: { xs: '32px', md: '50px' } }}>
