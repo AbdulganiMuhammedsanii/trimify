@@ -43,7 +43,8 @@ const SoundbarCard: React.FC = () => {
   // Run this only on the client
   useEffect(() => {
     setDelays(waves.map(() => Math.random()));
-  }, [waves]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Card elevation={3} sx={{ maxWidth: 800, padding: { xs: '32px', md: '50px' } }}>
