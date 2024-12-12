@@ -41,7 +41,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <ThemeProvider theme={theme}>
-          <AppBar position="static" sx={{ borderBottom: "1px solid rgba(0, 0, 0, 0.1)" }}>
+          <AppBar position='fixed' sx={{ borderBottom: "1px solid rgba(0, 0, 0, 0.1)" }}>
             <Toolbar>
               <Typography component={Link} href="/" variant="h6" sx={{ flexGrow: 1 }}>
                 <Box
@@ -65,13 +65,13 @@ export default function RootLayout({
               </IconButton>
               {/* Desktop Buttons */}
               <Box sx={{ display: { xs: "none", md: "flex" } }}>
-                <Button color="inherit" sx={{ fontFamily: "Inter", }}>
+                <Button style={{ color: "#000000" }} sx={{ fontFamily: "Inter", }}>
                   Features
                 </Button>
-                <Button color="inherit" sx={{ fontFamily: "Inter", }}>
+                <Button style={{ color: "#000000" }} sx={{ fontFamily: "Inter", }}>
                   Pricing
                 </Button>
-                <Button color="inherit" sx={{ fontFamily: "Inter", }}>
+                <Button style={{ color: "#000000" }} sx={{ fontFamily: "Inter", }}>
                   <strong>API</strong>
                 </Button>
 
@@ -94,27 +94,27 @@ export default function RootLayout({
             <MenuItem onClick={handleMenuClose} color="inherit" component={Link} href="/" sx={{
               fontFamily: "Inter",
               fontSize: "1.1rem",
-              color: "#333",
+              color: "#000000",
               '&:hover': {
                 backgroundColor: "#e0e0e0",
               },
             }}>
-              Features
+              <strong>Features</strong>
             </MenuItem>
             <MenuItem onClick={handleMenuClose} sx={{
               fontFamily: "Inter",
               fontSize: "1.1rem",
-              color: "#333",
+              color: "#000000",
               '&:hover': {
                 backgroundColor: "#e0e0e0",
               },
             }}>
-              Pricing
+              <strong>Pricing</strong>
             </MenuItem>
             <MenuItem onClick={handleMenuClose} sx={{
               fontFamily: "Inter",
               fontSize: "1.1rem",
-              color: "#333",
+              color: "#000000",
               '&:hover': {
                 backgroundColor: "#e0e0e0",
               },

@@ -1,20 +1,23 @@
 "use client";
 import { Box, Container, Grid, Typography, Button } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check"
+import SoundBarCard from './components/SoundbarCard';
 
 
 const LandingPage: React.FC = () => {
   return (
-    <Box id="instagram" sx={{ py: 8, backgroundColor: '#FFFFFF' }}>
+    <Box id="instagram" sx={{
+      height: '100vh', overflow: 'auto', backgroundColor: '#FFFFFF', paddingTop: '150px' // Adjust this value to match your AppBar height
+    }}>
       <Container maxWidth="lg">
-        <Grid container spacing={4} alignItems="flex-start" sx={{ height: '70vh' }}>
-          <Grid item xs={12} md={12} color="secondary" sx={{ textAlign: 'left' }}>
+        <Grid container spacing={4} alignItems="flex-start">
+          <Grid item xs={12} md={8} color="secondary" sx={{ textAlign: 'left' }}>
             <Typography variant="h3" component="h2" gutterBottom sx={{
               fontFamily: "Inter",
               fontWeight: "bold",
               color: "#000000",
-            }}>Streamline Your
-
+            }}>
+              Streamline Your
               <strong style={{ color: "#0096FF" }}> Podcast Production </strong>with Our Distraction-Free Cleaner
             </Typography>
             <Box component="ul" sx={{ listStyle: "none", padding: 0 }}>
@@ -50,11 +53,15 @@ const LandingPage: React.FC = () => {
               </Typography>
             </Box>
           </Grid>
+          <Grid item xs={12} md={4} sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'center', alignItems: 'center', mt: { xs: 4, md: 0 } }}>
+            <SoundBarCard />
+          </Grid>
           <Grid item xs={12} md={4} sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
             <Button variant="contained" color="secondary" sx={{ fontFamily: "Inter", fontWeight: "bold", fontSize: "1.2rem" }}>
               Get Started
             </Button>
           </Grid>
+
         </Grid>
       </Container>
     </Box>
