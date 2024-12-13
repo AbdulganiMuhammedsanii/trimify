@@ -7,15 +7,17 @@ import SoundBarCard from './components/SoundbarCard';
 const LandingPage: React.FC = () => {
   return (
     <Box id="instagram" sx={{
-      height: '100vh', overflow: 'auto', backgroundColor: '#FFFFFF', paddingTop: '150px' // Adjust this value to match your AppBar height
+      height: { xs: '80vh', md: '85vh' }, overflow: 'auto', backgroundColor: '#FFFFFF', paddingTop: '100px' // Adjust this value to match your AppBar height
     }}>
       <Container maxWidth="lg">
-        <Grid container spacing={4} alignItems="flex-start">
-          <Grid item xs={12} md={8} color="secondary" sx={{ textAlign: 'left' }}>
-            <Typography variant="h3" component="h2" gutterBottom sx={{
+        <Grid container spacing={4} alignItems="flex-start" sx={{ marginBottom: { xs: 4, md: 10 } }}>
+          <Grid item xs={12} md={8} color="secondary" sx={{ marginBottom: { xs: 4 }, textAlign: 'left' }}>
+            <Typography component="h2" gutterBottom sx={{
+              fontSize: { xs: "2.25rem", md: "3.5rem" },
               fontFamily: "Inter",
-              fontWeight: "bold",
+              fontWeight: 'light',
               color: "#000000",
+              marginBottom: 4,
             }}>
               Streamline Your
               <strong style={{ color: "#0096FF" }}> Podcast Production </strong>with Our Distraction-Free Cleaner
@@ -25,31 +27,31 @@ const LandingPage: React.FC = () => {
                 <Box component="span" sx={{ marginRight: 1 }}>
                   <CheckIcon style={{ color: "#000000" }} />
                 </Box>
-                AI-Powered Audio Cleaning: Automatically removes filler words, silences gaps, and reduces background noise.
+                Automatically removes filler words, silences gaps, and reduces background noise.
               </Typography>
               <Typography component="li" variant="body1" style={{ color: "#000000" }} sx={{ fontFamily: "Inter", display: "flex", alignItems: "center" }}>
                 <Box component="span" sx={{ marginRight: 1 }}>
                   <CheckIcon style={{ color: "#000000" }} />
                 </Box>
-                Seamless API Integration: Easily incorporate our cleaning tools into your existing workflows.
+                Access and manage your podcasts from anywhere with cloud-based tools.
               </Typography>
               <Typography component="li" variant="body1" style={{ color: "#000000" }} sx={{ fontFamily: "Inter", display: "flex", alignItems: "center" }}>
                 <Box component="span" sx={{ marginRight: 1 }}>
                   <CheckIcon style={{ color: "#000000" }} />
                 </Box>
-                Intuitive User Interface: User-friendly design tailored for creators.
+                User-friendly design tailored for creators.
               </Typography>
               <Typography component="li" variant="body1" style={{ color: "#000000" }} sx={{ fontFamily: "Inter", display: "flex", alignItems: "center" }}>
                 <Box component="span" sx={{ marginRight: 1 }}>
                   <CheckIcon style={{ color: "#000000" }} />
                 </Box>
-                High-Quality Audio Enhancement: Achieve studio-grade sound effortlessly.
+                Achieve studio-grade sound effortlessly.
               </Typography>
               <Typography component="li" variant="body1" style={{ color: "#000000" }} sx={{ fontFamily: "Inter", display: "flex", alignItems: "center" }}>
                 <Box component="span" sx={{ marginRight: 1 }}>
                   <CheckIcon style={{ color: "#000000" }} />
                 </Box>
-                Free Trial & Cloud Access: Access and manage your podcasts from anywhere with cloud-based tools.
+                Seamless API Integration.
               </Typography>
             </Box>
           </Grid>
@@ -64,7 +66,7 @@ const LandingPage: React.FC = () => {
 
         </Grid>
       </Container>
-    </Box>
+    </Box >
   );
 }
 
