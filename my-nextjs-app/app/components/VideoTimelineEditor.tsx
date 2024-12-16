@@ -218,7 +218,7 @@ const VideoTimelineEditor: React.FC = () => {
 
       const processedData = ffmpeg.current.FS('readFile', 'output.mp4');
       const processedVideoURL = URL.createObjectURL(
-        new Blob([processedData.buffer], { type: 'video/mp4' })
+        new Blob([processedData], { type: 'video/mp4' })
       );
 
       setProcessedVideoURL(processedVideoURL);
