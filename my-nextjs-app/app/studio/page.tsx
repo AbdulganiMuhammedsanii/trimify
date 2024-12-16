@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import FFmpegComponent from '../components/FFmpegComponent';
+import FFmpegComponent from '../components/VideoTimelineEditor';
 
 const Studio: React.FC = () => (
   <Box
