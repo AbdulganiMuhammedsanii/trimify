@@ -54,7 +54,7 @@ const TimelineTrack = styled(Box)({
   zIndex: 5,
 });
 
-const TimelineHandle = styled(Box)(({ theme }) => ({
+const TimelineHandle = styled(Box)(() => ({
   position: 'absolute',
   width: 20,
   height: '100%',
@@ -91,12 +91,10 @@ const VideoTimelineEditor: React.FC = () => {
   const [thumbnails, setThumbnails] = useState<string[]>([]);
   const [isResizing, setIsResizing] = useState<'start' | 'end' | null>(null);
 
-  const ffmpeg = useRef<any>(null);
+  const ffmpeg = useRef<ReturnType<typeof createFFmpeg> | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const timelineRef = useRef<HTMLDivElement | null>(null);
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     const loadFFmpeg = async () => {
@@ -186,225 +184,226 @@ const VideoTimelineEditor: React.FC = () => {
           setProcessing(false);
         };
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('FFmpeg processing error:', err);
-      setError(err.message || 'An error occurred while uploading the video.');
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred while uploading the video.';
+      setError(errorMessage);
       setProcessing(false);
     }
-  };
 
-  const handleProcessVideo = async () => {
-    if (!ffmpeg.current || !ffmpeg.current.isLoaded()) {
-      setError('FFmpeg is not loaded');
-      return;
-    }
-
-    setProcessing(true);
-    setError(null);
-    setProcessedVideoURL(null);
-
-    try {
-      const [start, end] = trimRange;
-      const args: string[] = [
-        '-i', 'input.mp4',
-        '-ss', start.toString(),
-        '-to', end.toString(),
-        '-c:v', 'libx264',
-        '-c:a', 'aac',
-        'output.mp4'
-      ];
-
-      await ffmpeg.current.run(...args);
-
-      const processedData = ffmpeg.current.FS('readFile', 'output.mp4');
-      const processedVideoURL = URL.createObjectURL(
-        new Blob([processedData.buffer], { type: 'video/mp4' })
-      );
-
-      setProcessedVideoURL(processedVideoURL);
-    } catch (err: any) {
-      console.error('FFmpeg processing error:', err);
-      setError(err.message || 'An error occurred while processing the video.');
-    } finally {
-      setProcessing(false);
-    }
-  };
-
-  const handleMouseDown = (handle: 'start' | 'end') => (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsResizing(handle);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isResizing || !timelineRef.current) return;
-
-    const timelineRect = timelineRef.current.getBoundingClientRect();
-    const mouseX = e.clientX - timelineRect.left;
-    const percentage = Math.max(0, Math.min(1, mouseX / timelineRect.width));
-    const newTime = percentage * duration;
-
-    setTrimRange(prevRange => {
-      const newRange = [...prevRange];
-      const index = isResizing === 'start' ? 0 : 1;
-      newRange[index] = newTime;
-
-      // Ensure start is always less than end
-      if (newRange[0] > newRange[1]) {
-        newRange[0] = newRange[1];
+    const handleProcessVideo = async () => {
+      if (!ffmpeg.current || !ffmpeg.current.isLoaded()) {
+        setError('FFmpeg is not loaded');
+        return;
       }
 
-      return newRange;
-    });
-  };
+      setProcessing(true);
+      setError(null);
+      setProcessedVideoURL(null);
 
-  const handleMouseUp = () => {
-    setIsResizing(null);
-  };
+      try {
+        const [start, end] = trimRange;
+        const args: string[] = [
+          '-i', 'input.mp4',
+          '-ss', start.toString(),
+          '-to', end.toString(),
+          '-c:v', 'libx264',
+          '-c:a', 'aac',
+          'output.mp4'
+        ];
 
-  useEffect(() => {
-    if (isResizing) {
-      window.addEventListener('mousemove', handleMouseMove as any);
-      window.addEventListener('mouseup', handleMouseUp);
-    }
+        await ffmpeg.current.run(...args);
 
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove as any);
-      window.removeEventListener('mouseup', handleMouseUp);
+        const processedData = ffmpeg.current.FS('readFile', 'output.mp4');
+        const processedVideoURL = URL.createObjectURL(
+          new Blob([processedData.buffer], { type: 'video/mp4' })
+        );
+
+        setProcessedVideoURL(processedVideoURL);
+      } catch (err) {
+        console.error('FFmpeg processing error:', err);
+        const errorMessage = err instanceof Error ? err.message : 'An error occurred while processing the video.';
+        setError(errorMessage);
+      } finally {
+        setProcessing(false);
+      }
     };
-  }, [isResizing, duration]);
 
-  return (
-    <VideoEditorContainer>
-      <Box display="flex" flexDirection="column" alignItems="center" gap={3}>
-        <Typography variant="h4" sx={{ color: '#FFFFFF', textAlign: 'center' }}>
-          Video Timeline Editor
-        </Typography>
+    const handleMouseDown = (handle: 'start' | 'end') => (e: React.MouseEvent) => {
+      e.preventDefault();
+      setIsResizing(handle);
+    };
 
-        {error && (
-          <Snackbar
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-            open={!!error}
-            message={error}
-            autoHideDuration={6000}
-            onClose={() => setError(null)}
-          />
-        )}
+    const handleMouseMove = (e: React.MouseEvent) => {
+      if (!isResizing || !timelineRef.current) return;
 
-        <PrimaryButton
-          variant="contained"
-          as="label"
-          disabled={processing || !ready}
-        >
-          {ready ? 'Upload Video' : 'Loading...'}
-          <input
-            type="file"
-            accept="video/*"
-            hidden
-            onChange={handleFileUpload}
-          />
-        </PrimaryButton>
+      const timelineRect = timelineRef.current.getBoundingClientRect();
+      const mouseX = e.clientX - timelineRect.left;
+      const percentage = Math.max(0, Math.min(1, mouseX / timelineRect.width));
+      const newTime = percentage * duration;
 
-        {originalVideoURL && (
-          <Box width="100%" display="flex" flexDirection="column" alignItems="center">
-            <video
-              ref={videoRef}
-              src={originalVideoURL}
-              controls
-              style={{
-                maxWidth: '100%',
-                maxHeight: 400,
-                borderRadius: '8px',
-                marginBottom: 16,
-              }}
+      setTrimRange(prevRange => {
+        const newRange = [...prevRange];
+        const index = isResizing === 'start' ? 0 : 1;
+        newRange[index] = newTime;
+
+        // Ensure start is always less than end
+        if (newRange[0] > newRange[1]) {
+          newRange[0] = newRange[1];
+        }
+
+        return newRange;
+      });
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(null);
+    };
+
+    useEffect(() => {
+      if (isResizing) {
+        window.addEventListener('mousemove', handleMouseMove as unknown as EventListener);
+        window.addEventListener('mouseup', handleMouseUp as unknown as EventListener);
+      }
+
+      return () => {
+        window.removeEventListener('mousemove', handleMouseMove as unknown as EventListener);
+        window.removeEventListener('mouseup', handleMouseUp as unknown as EventListener);
+      };
+    }, [isResizing, duration]);
+
+    return (
+      <VideoEditorContainer>
+        <Box display="flex" flexDirection="column" alignItems="center" gap={3}>
+          <Typography variant="h4" sx={{ color: '#FFFFFF', textAlign: 'center' }}>
+            Video Timeline Editor
+          </Typography>
+
+          {error && (
+            <Snackbar
+              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+              open={!!error}
+              message={error}
+              autoHideDuration={6000}
+              onClose={() => setError(null)}
             />
+          )}
 
-            <TimelineContainer
-              ref={timelineRef}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-            >
-              {/* Video Thumbnail Strip */}
-              <VideoThumbnailStrip>
-                {thumbnails.map((thumb, index) => (
-                  <VideoThumbnail
-                    key={index}
-                    src={thumb}
-                    alt={`Thumbnail ${index}`}
-                  />
-                ))}
-              </VideoThumbnailStrip>
+          <PrimaryButton
+            variant="contained"
+            as="label"
+            disabled={processing || !ready}
+          >
+            {ready ? 'Upload Video' : 'Loading...'}
+            <input
+              type="file"
+              accept="video/*"
+              hidden
+              onChange={handleFileUpload}
+            />
+          </PrimaryButton>
 
-              {/* Selected Range Highlight */}
-              <TimelineTrack
-                sx={{
-                  left: `${(trimRange[0] / duration) * 100}%`,
-                  width: `${((trimRange[1] - trimRange[0]) / duration) * 100}%`,
+          {originalVideoURL && (
+            <Box width="100%" display="flex" flexDirection="column" alignItems="center">
+              <video
+                ref={videoRef}
+                src={originalVideoURL}
+                controls
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: 400,
+                  borderRadius: '8px',
+                  marginBottom: 16,
                 }}
               />
 
-              {/* Start Handle */}
-              <TimelineHandle
-                onMouseDown={handleMouseDown('start')}
-                sx={{
-                  left: `${(trimRange[0] / duration) * 100}%`,
-                  transform: 'translateX(-50%)'
-                }}
-              />
+              <TimelineContainer
+                ref={timelineRef}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+              >
+                {/* Video Thumbnail Strip */}
+                <VideoThumbnailStrip>
+                  {thumbnails.map((thumb, index) => (
+                    <VideoThumbnail
+                      key={index}
+                      src={thumb}
+                      alt={`Thumbnail ${index}`}
+                    />
+                  ))}
+                </VideoThumbnailStrip>
 
-              {/* End Handle */}
-              <TimelineHandle
-                onMouseDown={handleMouseDown('end')}
-                sx={{
-                  left: `${(trimRange[1] / duration) * 100}%`,
-                  transform: 'translateX(-50%)'
-                }}
-              />
-            </TimelineContainer>
+                {/* Selected Range Highlight */}
+                <TimelineTrack
+                  sx={{
+                    left: `${(trimRange[0] / duration) * 100}%`,
+                    width: `${((trimRange[1] - trimRange[0]) / duration) * 100}%`,
+                  }}
+                />
 
-            <Box mt={2} display="flex" justifyContent="space-between" width="100%" color="#888">
-              <Typography>Start: {trimRange[0].toFixed(2)}s</Typography>
-              <Typography>End: {trimRange[1].toFixed(2)}s</Typography>
+                {/* Start Handle */}
+                <TimelineHandle
+                  onMouseDown={handleMouseDown('start')}
+                  sx={{
+                    left: `${(trimRange[0] / duration) * 100}%`,
+                    transform: 'translateX(-50%)'
+                  }}
+                />
+
+                {/* End Handle */}
+                <TimelineHandle
+                  onMouseDown={handleMouseDown('end')}
+                  sx={{
+                    left: `${(trimRange[1] / duration) * 100}%`,
+                    transform: 'translateX(-50%)'
+                  }}
+                />
+              </TimelineContainer>
+
+              <Box mt={2} display="flex" justifyContent="space-between" width="100%" color="#888">
+                <Typography>Start: {trimRange[0].toFixed(2)}s</Typography>
+                <Typography>End: {trimRange[1].toFixed(2)}s</Typography>
+              </Box>
+
+              <PrimaryButton
+                variant="contained"
+                onClick={handleProcessVideo}
+                disabled={processing}
+                sx={{ mt: 3 }}
+              >
+                {processing ? 'Processing...' : 'Trim Video'}
+              </PrimaryButton>
             </Box>
+          )}
 
-            <PrimaryButton
-              variant="contained"
-              onClick={handleProcessVideo}
-              disabled={processing}
-              sx={{ mt: 3 }}
-            >
-              {processing ? 'Processing...' : 'Trim Video'}
-            </PrimaryButton>
-          </Box>
-        )}
+          {processedVideoURL && (
+            <Box width="100%" textAlign="center" mt={4}>
+              <Typography variant="h5" sx={{ color: '#FFFFFF', mb: 2 }}>
+                Processed Video
+              </Typography>
+              <video
+                src={processedVideoURL}
+                controls
+                style={{
+                  maxWidth: '100%',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+                }}
+              />
+              <Button
+                variant="outlined"
+                href={processedVideoURL}
+                download="trimmed_video.mp4"
+                sx={{ mt: 3, borderColor: '#2196f3', color: '#2196f3' }}
+                component="a"
+              >
+                Download Trimmed Video
+              </Button>
+            </Box>
+          )}
+        </Box>
+      </VideoEditorContainer>
+    );
+  };
 
-        {processedVideoURL && (
-          <Box width="100%" textAlign="center" mt={4}>
-            <Typography variant="h5" sx={{ color: '#FFFFFF', mb: 2 }}>
-              Processed Video
-            </Typography>
-            <video
-              src={processedVideoURL}
-              controls
-              style={{
-                maxWidth: '100%',
-                borderRadius: '8px',
-                boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
-              }}
-            />
-            <Button
-              variant="outlined"
-              href={processedVideoURL}
-              download="trimmed_video.mp4"
-              sx={{ mt: 3, borderColor: '#2196f3', color: '#2196f3' }}
-              component="a"
-            >
-              Download Trimmed Video
-            </Button>
-          </Box>
-        )}
-      </Box>
-    </VideoEditorContainer>
-  );
-};
-
-export default VideoTimelineEditor;
+  export default VideoTimelineEditor;
