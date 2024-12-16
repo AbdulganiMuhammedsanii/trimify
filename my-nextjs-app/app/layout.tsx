@@ -57,6 +57,29 @@ export default function RootLayout({
         <ListItem disablePadding>
           <ListItemButton
             component={Link}
+            href="/studio"
+            onClick={handleMenuClose}
+            sx={{
+              borderRadius: "8px",
+              "&:hover": {
+                backgroundColor: "#e0e0e0",
+              },
+            }}
+          >
+            <ListItemText
+              primary="Studio"
+              primaryTypographyProps={{
+                fontFamily: "Inter",
+                fontSize: "1.1rem",
+                fontWeight: 700,
+                color: "#000000",
+              }}
+            />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton
+            component={Link}
             href="/"
             onClick={handleMenuClose}
             sx={{
@@ -155,6 +178,18 @@ export default function RootLayout({
               </IconButton>
               {/* Desktop Buttons */}
               <Box sx={{ display: { xs: "none", md: "flex" } }}>
+                <Button
+                  component={Link}
+                  href="/studio"
+                  style={{ color: "#000000" }}
+                  sx={{
+                    fontFamily: "Inter",
+                    fontWeight: 700,
+                    textTransform: "none",
+                  }}
+                >
+                  Studio
+                </Button>
                 <Button
                   style={{ color: "#000000" }}
                   sx={{
