@@ -1,6 +1,6 @@
 "use client";
-import React, { useRef, useState, useEffect } from 'react';
-import { Box, Container, Grid, Typography, Button, Paper, Avatar } from "@mui/material";
+import React, { useRef, useEffect } from 'react';
+import { Box, Container, Grid, Typography, Button } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check"
 import SoundBarCard from './components/SoundbarCard';
 import Testimonial from './components/testimonial'

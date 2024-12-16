@@ -6,11 +6,11 @@ import {
   Button,
   Typography,
   Snackbar,
-  useTheme,
-  useMediaQuery,
+
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
+/*  full background of application of video rendering section **/
 const VideoEditorContainer = styled(Box)(({ theme }) => ({
   maxWidth: 900,
   margin: '0 auto',
@@ -54,6 +54,7 @@ const TimelineTrack = styled(Box)({
   zIndex: 5,
 });
 
+/* timeline section **/
 const TimelineHandle = styled(Box)(() => ({
   position: 'absolute',
   width: 20,
@@ -262,16 +263,18 @@ const VideoTimelineEditor: React.FC = () => {
   };
 
   useEffect(() => {
+    const handleMouseMoveTyped = (e: MouseEvent) => handleMouseMove(e as unknown as React.MouseEvent);
+
     if (isResizing) {
-      window.addEventListener('mousemove', handleMouseMove as any);
+      window.addEventListener('mousemove', handleMouseMoveTyped);
       window.addEventListener('mouseup', handleMouseUp);
     }
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove as any);
+      window.removeEventListener('mousemove', handleMouseMoveTyped);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isResizing, duration]);
+  }, [isResizing, handleMouseMove]);
 
   return (
     <VideoEditorContainer>

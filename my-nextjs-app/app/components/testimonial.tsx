@@ -3,14 +3,6 @@ import React from 'react';
 
 import { Box, Typography, Grid, Paper, Avatar } from "@mui/material";
 
-import { keyframes } from '@mui/system';
-
-// Keyframes for fade-in animation
-const fadeIn = keyframes`
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
-`;
-
 // Dummy data for demonstration
 const testimonials = [
   {
@@ -30,8 +22,7 @@ const testimonials = [
   },
 ];
 
-
-const testimonial: React.FC = () => {
+const Testimonial: React.FC = () => {
   const [inView, setInView] = React.useState(false);
   const testimonialsRef = React.useRef<HTMLDivElement | null>(null);
 
@@ -60,6 +51,7 @@ const testimonial: React.FC = () => {
       }
     };
   }, []);
+
   return (
     <Box
       ref={testimonialsRef}
@@ -164,18 +156,4 @@ const testimonial: React.FC = () => {
   );
 };
 
-export default testimonial;
-
-function useState(arg0: boolean): [any, any] {
-  throw new Error("Function not implemented.");
-}
-
-
-function useRef<T>(arg0: null) {
-  throw new Error("Function not implemented.");
-}
-
-
-function useEffect(arg0: () => (() => void) | undefined, arg1: never[]) {
-  throw new Error("Function not implemented.");
-}
+export default Testimonial;
