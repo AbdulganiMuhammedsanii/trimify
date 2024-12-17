@@ -27,7 +27,6 @@ const testimonials = [
 ];
 
 const Testimonial: React.FC = () => {
-  const [inView, setInView] = React.useState(false);
   const testimonialsRef = React.useRef<HTMLDivElement | null>(null);
   const theme = useTheme(); // Access the current theme
 
@@ -37,7 +36,6 @@ const Testimonial: React.FC = () => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setInView(true);
           observer.unobserve(entry.target);
         }
       },
