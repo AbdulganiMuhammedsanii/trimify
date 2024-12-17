@@ -30,7 +30,7 @@ import {
 } from "react-icons/hi";
 
 const VideoTimelineEditor: React.FC = () => {
-  const [ready, setReady] = useState<boolean>(false);
+
   const [processing, setProcessing] = useState<boolean>(false);
   const [originalVideoURL, setOriginalVideoURL] = useState<string | null>(null);
   const [processedVideoURL, setProcessedVideoURL] = useState<string | null>(null);
@@ -51,7 +51,6 @@ const VideoTimelineEditor: React.FC = () => {
       try {
         ffmpeg.current = createFFmpeg({ log: true });
         await ffmpeg.current.load();
-        setReady(true);
       } catch (err) {
         console.error("Failed to load FFmpeg:", err);
         setError("Failed to load processing tools. Please try again later.");
@@ -262,7 +261,7 @@ const VideoTimelineEditor: React.FC = () => {
   );
 
   /* Stop dragging */
-  const handleMouseUp = useCallback((e: globalThis.MouseEvent) => {
+  const handleMouseUp = useCallback(() => {
     setIsDragging(null);
   }, []);
 
@@ -363,31 +362,74 @@ const VideoTimelineEditor: React.FC = () => {
         Video Timeline Editor
       </Typography>
 
-      {/* Upload Area */}
-      <Box
-        {...getRootProps()}
-        sx={{
-          border: "2px dashed",
-          borderColor: isDragActive ? "primary.main" : "grey.500",
-          borderRadius: "8px",
-          padding: "40px 20px",
-          textAlign: "center",
-          cursor: "pointer",
-          backgroundColor: isDragActive ? "grey.700" : "grey.800",
-          transition: "background-color 0.3s, border-color 0.3s",
-          color: "grey.300",
-        }}
-      >
-        <input {...getInputProps()} />
-        <FiUpload size={50} color={isDragActive ? "#2196f3" : "#FFFFFF"} />
-        {isDragActive ? (
-          <Typography variant="body1" sx={{ color: "primary.main", mt: 2 }}>
-            Drop the video here...
-          </Typography>
-        ) : (
-          <Typography variant="body1" sx={{ color: "#FFFFFF", mt: 2 }}>
-            Drag & Drop a video here, or click to select
-          </Typography>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        {/* Upload Area */}
+        <Box
+          {...getRootProps()}
+          sx={{
+            border: "2px dashed",
+            borderColor: isDragActive ? "primary.main" : "grey.500",
+            borderRadius: "8px",
+            padding: "40px 20px",
+            textAlign: "center",
+            cursor: "pointer",
+            backgroundColor: isDragActive ? "grey.700" : "grey.800",
+            transition: "background-color 0.3s, border-color 0.3s",
+            color: "grey.300",
+            flex: "1",
+            marginRight: "16px",
+          }}
+        >
+          <input {...getInputProps()} />
+          <FiUpload size={50} color={isDragActive ? "#2196f3" : "#FFFFFF"} />
+          {isDragActive ? (
+            <Typography variant="body1" sx={{ color: "primary.main", mt: 2 }}>
+              Drop the video here...
+            </Typography>
+          ) : (
+            <Typography variant="body1" sx={{ color: "#FFFFFF", mt: 2 }}>
+              Drag & Drop a video here, or click to select
+            </Typography>
+          )}
+        </Box>
+
+        {/* Video Player */}
+        {(processedVideoURL || originalVideoURL) && (
+          <Box sx={{ flex: "1", maxWidth: "400px" }}>
+            <Paper elevation={6} sx={{ p: 2, backgroundColor: "grey.800" }}>
+              <Box sx={{ position: "relative" }}>
+                <video
+                  ref={videoRef}
+                  src={processedVideoURL || originalVideoURL || undefined}
+                  controls
+                  onTimeUpdate={handleTimeUpdate}
+                  style={{
+                    width: "100%",
+                    borderRadius: "8px",
+                    backgroundColor: "#000",
+                  }}
+                />
+                {/* Play/Pause Button Overlay */}
+                <Tooltip title="Play/Pause">
+                  <IconButton
+                    onClick={handlePlayPause}
+                    sx={{
+                      position: "absolute",
+                      top: 16,
+                      left: 16,
+                      backgroundColor: "rgba(0,0,0,0.5)",
+                      color: "#FFFFFF",
+                      "&:hover": {
+                        backgroundColor: "rgba(0,0,0,0.7)",
+                      },
+                    }}
+                  >
+                    {videoRef.current?.paused ? <FaPlay /> : <FaPause />}
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            </Paper>
+          </Box>
         )}
       </Box>
 
@@ -435,45 +477,6 @@ const VideoTimelineEditor: React.FC = () => {
                 <FiTrash2 size={24} />
               </IconButton>
             </Tooltip>
-          </Paper>
-        </Box>
-      )}
-
-      {/* Video Player */}
-      {(processedVideoURL || originalVideoURL) && (
-        <Box sx={{ mt: 4 }}>
-          <Paper elevation={6} sx={{ p: 2, backgroundColor: "grey.800" }}>
-            <Box sx={{ position: "relative" }}>
-              <video
-                ref={videoRef}
-                src={processedVideoURL || originalVideoURL || undefined}
-                controls
-                onTimeUpdate={handleTimeUpdate}
-                style={{
-                  width: "100%",
-                  borderRadius: "8px",
-                  backgroundColor: "#000",
-                }}
-              />
-              {/* Play/Pause Button Overlay */}
-              <Tooltip title="Play/Pause">
-                <IconButton
-                  onClick={handlePlayPause}
-                  sx={{
-                    position: "absolute",
-                    top: 16,
-                    left: 16,
-                    backgroundColor: "rgba(0,0,0,0.5)",
-                    color: "#FFFFFF",
-                    "&:hover": {
-                      backgroundColor: "rgba(0,0,0,0.7)",
-                    },
-                  }}
-                >
-                  {videoRef.current?.paused ? <FaPlay /> : <FaPause />}
-                </IconButton>
-              </Tooltip>
-            </Box>
           </Paper>
         </Box>
       )}
@@ -592,7 +595,7 @@ const VideoTimelineEditor: React.FC = () => {
                       edge="end"
                       aria-label="delete"
                       onClick={removeTrimRange(index)}
-                      sx={{ color: "#FF6B6B" }}
+                      sx={{ color: "#1976d2" }}
                     >
                       <FiTrash2 />
                     </IconButton>
@@ -632,7 +635,7 @@ const VideoTimelineEditor: React.FC = () => {
             sx={{ height: "50px", px: 4 }}
           >
             {processing ? (
-              <CircularProgress size={24} color="inherit" />
+              <CircularProgress size={24} sx={{ color: "#1976d2" }} />
             ) : (
               "Trim and Stitch Video"
             )}

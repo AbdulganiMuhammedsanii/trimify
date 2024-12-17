@@ -16,10 +16,7 @@ import SoundBarCard from "./components/SoundbarCard"; // Ensure correct import p
 import Testimonial from "./components/testimonial"; // Ensure correct import path and casing
 import Features from "./components/features"
 
-// Import icons for features
-import VolumeUp from "@mui/icons-material/VolumeUp"; // Add this import
-import SubtitlesIcon from "@mui/icons-material/Subtitles";
-import BlockIcon from "@mui/icons-material/Block";
+
 
 const LandingPage: React.FC = () => {
   const testimonialsRef = useRef<HTMLDivElement | null>(null);
