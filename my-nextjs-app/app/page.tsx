@@ -206,7 +206,7 @@ const LandingPage: React.FC = () => {
           </Typography>
           <Box
             component="video"
-            src="/videos/aliabdal.mp4"
+            src="/videos/galaxy.mp4"
             controls
             muted
             loop
@@ -231,8 +231,7 @@ const LandingPage: React.FC = () => {
               lineHeight: 1.6,
             }}
           >
-            Join Ali Abdal as he showcases how our innovative tool can revolutionize your podcast production, delivering studio-quality audio effortlessly.
-          </Typography>
+            API Still In Development ...          </Typography>
         </Box>
 
         {/* Features Subsection */}
