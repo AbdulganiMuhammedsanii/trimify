@@ -1,35 +1,38 @@
+// components/Studio.tsx
 "use client";
 
-import React from 'react';
-import { Box, Typography } from '@mui/material';
-import FFmpegComponent from '../components/VideoTimelineEditor';
+import React from "react";
+import { Box, Container, Typography, useTheme } from "@mui/material";
+import FFmpegComponent from "../components/VideoTimelineEditor";
 
-const Studio: React.FC = () => (
-  <Box
-    sx={{
-      maxWidth: 'lg',
-      backgroundColor: '#FFFFFF',
-      padding: { xs: 3, md: 5 },
-      borderRadius: 2,
-      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-      margin: 'auto',
-      mt: 10,
-      textAlign: 'center',
-    }}
-  >
-    <Typography
-      variant="h4"
+const Studio: React.FC = () => {
+  const theme = useTheme(); // Access the current theme
+
+  return (
+    <Box
       sx={{
-        fontWeight: 700,
-        color: '#0096FF',
-        mb: 5,
-        fontFamily: 'Inter, sans-serif',
+        maxWidth: "lg",
+        backgroundColor: theme.palette.background.paper, // Theme-aware background
+        height: "auto",
+        padding: { xs: 3, md: 5 },
+        borderRadius: 2,
+        margin: "auto",
+        mt: 10,
+        mb: 50,
+        textAlign: "center",
+        boxShadow: theme.shadows[3], // Adaptive shadow based on theme
+        color: theme.palette.text.primary, // Theme-aware text color
+        transition: "background-color 0.3s ease, color 0.3s ease", // Smooth transition
       }}
     >
-      Welcome to the Video Studio
-    </Typography>
-    <FFmpegComponent />
-  </Box>
-);
+      <Container>
+        <Typography variant="h4" gutterBottom>
+          Welcome to the Studio
+        </Typography>
+        <FFmpegComponent />
+      </Container>
+    </Box>
+  );
+};
 
 export default Studio;

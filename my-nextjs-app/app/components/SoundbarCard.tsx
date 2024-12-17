@@ -42,8 +42,7 @@ const SoundbarCard: React.FC = () => {
 
   // Run this only on the client
   useEffect(() => {
-    setDelays(waves.map(() => Math.random()));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setDelays(Array(waves.length).fill(0).map(() => Math.random()));
   }, []);
 
   return (
