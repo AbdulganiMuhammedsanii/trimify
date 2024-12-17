@@ -211,7 +211,7 @@ const VideoTimelineEditor: React.FC = () => {
       // Step 4: Read the concatenated video
       const data = ffmpeg.current.FS("readFile", "output.mp4");
       const newProcessedVideoURL = URL.createObjectURL(
-        new Blob([data.buffer], { type: "video/mp4" })
+        new Blob([data], { type: "video/mp4" })
       );
 
       setProcessedVideoURL(newProcessedVideoURL);
